@@ -116,7 +116,7 @@
             var password = vm.password || '';
 
             // All logins go through real backend
-            \$http.post('/api/auth/login', { email: email, password: password })
+            $http.post('/api/auth/login', { email: email, password: password })
                 .then(function(res) {
                     vm.loading = false;
                     localStorage.setItem('eduToken', res.data.token);
@@ -133,7 +133,7 @@
         vm.register = function() {
             vm.regError = null;
             vm.regLoading = true;
-            \$http.post('/api/auth/register', vm.reg)
+            $http.post('/api/auth/register', vm.reg)
                 .then(function() {
                     vm.regLoading = false;
                     vm.isRegistering = false;

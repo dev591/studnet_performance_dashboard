@@ -138,7 +138,7 @@ app.controller('LeaderCtrl', function($http) {
     vm.pointsToNext = 0;
     vm.loading = true;
 
-    \$http.get('/api/students/leaderboard', { headers: { 'Authorization': 'Bearer ' + token } })
+    $http.get('/api/students/leaderboard', { headers: { 'Authorization': 'Bearer ' + token } })
         .then(function(res) {
             vm.loading = false;
             if (res.data.success) {
