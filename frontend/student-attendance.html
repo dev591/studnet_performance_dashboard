@@ -103,7 +103,7 @@ app.controller('AttendanceCtrl', function($http) {
     vm.records = []; vm.aggregate = 0; vm.total_missed = 0; vm.subjectPercents = {}; vm.loading = true;
     vm.load = function() {
         vm.loading = true;
-        $http.get(/api/attendance/my', { headers: { 'Authorization': 'Bearer ' + token } }).then(function(res) {
+        \$http.get('/api/attendance/my', { headers: { 'Authorization': 'Bearer ' + token } }).then(function(res) {
             vm.loading = false;
             if (res.data.success) {
                 vm.records = res.data.records;

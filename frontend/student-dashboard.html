@@ -178,7 +178,7 @@ app.controller('DashboardCtrl', function($http, $scope) {
     const headers = { 'Authorization': 'Bearer ' + token };
 
     // Load Dashboard Data
-    $http.get(/api/students/dashboard', { headers }).then(function(res) {
+    \$http.get('/api/students/dashboard', { headers }).then(function(res) {
         vm.loading = false;
         const d = res.data;
         vm.marks = d.marks || [];
@@ -193,12 +193,12 @@ app.controller('DashboardCtrl', function($http, $scope) {
     }).catch(function() { vm.loading = false; });
 
     // Load Announcements
-    $http.get(/api/announcements', { headers }).then(function(res) {
+    \$http.get('/api/announcements', { headers }).then(function(res) {
         if (res.data.success) vm.announcements = res.data.announcements;
     }).catch(angular.noop);
 
     // Load rank from leaderboard
-    $http.get(/api/students/leaderboard', { headers }).then(function(res) {
+    \$http.get('/api/students/leaderboard', { headers }).then(function(res) {
         if (res.data.success && res.data.leaderboard) {
             var myId = vm.profile.id;
             var idx = res.data.leaderboard.findIndex(function(s) { return s.id === myId; });
