@@ -4,22 +4,9 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS — allow your Vercel frontend URL
-// Update FRONTEND_URL in Railway environment variables after deploying frontend
-const allowedOrigins = [
-    process.env.FRONTEND_URL,       // e.g. https://edudash.vercel.app
-    'http://localhost:3000',         // local dev
-    'http://localhost:5500',         // VS Code Live Server
-    'http://127.0.0.1:5500'
-].filter(Boolean);
-
+// CORS — allow all frontend origins
 app.use(cors({
-    origin: function(origin, callback) {
-        // Allow requests with no origin (mobile apps, curl, etc.)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
-        return callback(new Error('Not allowed by CORS'));
-    },
+    origin: true,  // allow all origins for class project
     credentials: true
 }));
 

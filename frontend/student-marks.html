@@ -76,6 +76,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
 <script>
+const RAILWAY = 'https://student-performance-production-626c.up.railway.app';
 const app = angular.module('EduDash', []);
 app.controller('MarksCtrl', function($http) {
     const vm = this;
@@ -84,7 +85,7 @@ app.controller('MarksCtrl', function($http) {
     if (!token) { window.location.href = 'index.html'; return; }
     vm.profile = profileStr ? JSON.parse(profileStr) : {};
     vm.marks = []; vm.avg = 0; vm.failed = 0; vm.loading = true;
-    $http.get('/api/students/dashboard', { headers: { 'Authorization': 'Bearer ' + token } }).then(function(res) {
+    $http.get(RAILWAY + '/api/students/dashboard', { headers: { 'Authorization': 'Bearer ' + token } }).then(function(res) {
         vm.loading = false;
         vm.marks = res.data.marks || [];
         if (vm.marks.length > 0) {

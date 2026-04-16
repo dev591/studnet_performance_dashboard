@@ -124,6 +124,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
 <script>
+const RAILWAY = 'https://student-performance-production-626c.up.railway.app';
 const app = angular.module('EduDash', []);
 app.controller('LeaderCtrl', function($http) {
     const vm = this;
@@ -138,7 +139,7 @@ app.controller('LeaderCtrl', function($http) {
     vm.pointsToNext = 0;
     vm.loading = true;
 
-    $http.get('/api/students/leaderboard', { headers: { 'Authorization': 'Bearer ' + token } })
+    $http.get(RAILWAY + '/api/students/leaderboard', { headers: { 'Authorization': 'Bearer ' + token } })
         .then(function(res) {
             vm.loading = false;
             if (res.data.success) {

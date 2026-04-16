@@ -115,6 +115,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
 <script>
+const RAILWAY = 'https://student-performance-production-626c.up.railway.app';
 const app = angular.module('EduDash', []);
 app.controller('CertsCtrl', function($http) {
     const vm = this;
@@ -153,7 +154,7 @@ app.controller('CertsCtrl', function($http) {
     const headers = { 'Authorization': 'Bearer ' + token };
 
     function loadCerts() {
-        $http.get('/api/certificates/my', { headers }).then(function(res) {
+        $http.get(RAILWAY + '/api/certificates/my', { headers }).then(function(res) {
             vm.certs = (res.data.success) ? res.data.certificates : [];
         }).catch(function() { vm.certs = []; });
     }
@@ -175,7 +176,7 @@ app.controller('CertsCtrl', function($http) {
 
         function saveCertRecord(fileUrl) {
             var payload = { title: vm.newCert.title, issuer: vm.newCert.issuer || '', issued_date: vm.newCert.issued_date || null, category: vm.newCert.category, file_url: fileUrl };
-            $http.post('/api/certificates/upload', payload, { headers: { 'Authorization': 'Bearer ' + token } })
+            $http.post(RAILWAY + '/api/certificates/upload', payload, { headers: { 'Authorization': 'Bearer ' + token } })
                 .then(function(res) {
                     vm.uploading = false;
                     if (res.data.success && res.data.certificate) vm.certs.unshift(res.data.certificate);
@@ -223,7 +224,7 @@ app.controller('CertsCtrl', function($http) {
         var cert = vm.certs[idx];
         vm.certs.splice(idx, 1);
         if (cert.id) {
-            $http.delete('/api/certificates/' + cert.id, { headers }).catch(function() {
+            $http.delete(RAILWAY + '/api/certificates/' + cert.id, { headers }).catch(function() {
                 vm.certs.splice(idx, 0, cert);
             });
         }
