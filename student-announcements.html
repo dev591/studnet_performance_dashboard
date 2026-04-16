@@ -67,7 +67,7 @@ app.controller('AnnouncementsCtrl', function($http) {
     vm.announcements = []; vm.loading = true;
     vm.load = function() {
         vm.loading = true;
-        $http.get(/api/announcements', { headers: { 'Authorization': 'Bearer ' + token } }).then(function(res) {
+        $http.get('/api/announcements', { headers: { 'Authorization': 'Bearer ' + token } }).then(function(res) {
             vm.loading = false;
             if (res.data.success) vm.announcements = res.data.announcements;
         }).catch(function(){vm.loading=false;});
