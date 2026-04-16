@@ -4,11 +4,17 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS — allow all frontend origins
-app.use(cors({
-    origin: true,  // allow all origins for class project
-    credentials: true
-}));
+// CORS — allow all origins for class project
+app.use(cors({ origin: true, credentials: true }));
+
+// Extra safety — manually set CORS headers on every response
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') return res.sendStatus(200);
+    next();
+});
 
 app.use(express.json({ limit: '10mb' })); // 10mb for base64 certificate uploads
 
