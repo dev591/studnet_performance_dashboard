@@ -104,6 +104,7 @@
     </div>
 </div>
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
 <script>
 const app = angular.module('EduDash', []);
@@ -120,7 +121,7 @@ app.controller('GoalsCtrl', function($http, $scope) {
     const headers = { 'Authorization': 'Bearer ' + token };
 
     function loadGoals() {
-        $http.get('/api/goals/my', { headers }).then(function(res) {
+        $http.get(/api/goals/my', { headers }).then(function(res) {
             vm.goals = (res.data.success) ? res.data.goals : [];
             vm.goals = vm.goals.map(function(g) {
                 var days = g.target_date ? Math.ceil((new Date(g.target_date) - new Date()) / 86400000) : 30;
@@ -139,7 +140,7 @@ app.controller('GoalsCtrl', function($http, $scope) {
         // optimistic update
         goal.completed++;
         if (goal.id && !goal.id.startsWith('d')) {
-            $http.put('/api/goals/' + goal.id + '/increment', {}, { headers }).catch(function() { goal.completed--; });
+            $http.put(/api/goals/' + goal.id + '/increment', {}, { headers }).catch(function() { goal.completed--; });
         }
     };
 
@@ -147,7 +148,7 @@ app.controller('GoalsCtrl', function($http, $scope) {
         var goal = vm.goals[idx];
         vm.goals.splice(idx, 1);
         if (goal.id) {
-            $http.delete('/api/goals/' + goal.id, { headers }).catch(function() {
+            $http.delete(/api/goals/' + goal.id, { headers }).catch(function() {
                 // re-add if delete failed
                 vm.goals.splice(idx, 0, goal);
             });
@@ -156,7 +157,7 @@ app.controller('GoalsCtrl', function($http, $scope) {
 
     vm.createGoal = function() {
         if (!vm.newGoal.title) return;
-        $http.post('/api/goals/create', vm.newGoal, { headers }).then(function(res) {
+        $http.post(/api/goals/create', vm.newGoal, { headers }).then(function(res) {
             if (res.data.success && res.data.goal) {
                 var g = res.data.goal;
                 var days = g.target_date ? Math.ceil((new Date(g.target_date) - new Date()) / 86400000) : 30;

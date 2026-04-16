@@ -384,7 +384,7 @@ app.controller('TeacherCtrl', function($http) {
 
     // Load everything on init
     function loadStats() {
-        $http.get(' + API_BASE + '/api/teacher/stats', { headers }).then(function(res) {
+        $http.get(/api/teacher/stats', { headers }).then(function(res) {
             if (res.data.success) {
                 vm.classStats.totalStudents = res.data.totalStudents;
                 vm.classStats.avgMark = res.data.avgMark;
@@ -396,7 +396,7 @@ app.controller('TeacherCtrl', function($http) {
 
     function loadStudentCards() {
         vm.loadingStudents = true;
-        $http.get(' + API_BASE + '/api/teacher/students-full', { headers }).then(function(res) {
+        $http.get(/api/teacher/students-full', { headers }).then(function(res) {
             vm.loadingStudents = false;
             if (res.data.success) {
                 vm.students = res.data.students;
@@ -408,7 +408,7 @@ app.controller('TeacherCtrl', function($http) {
     }
 
     function loadAnnouncements() {
-        $http.get(' + API_BASE + '/api/announcements', { headers }).then(function(res) {
+        $http.get(/api/announcements', { headers }).then(function(res) {
             if (res.data.success) vm.announcements = res.data.announcements;
         }).catch(angular.noop);
     }
@@ -423,7 +423,7 @@ app.controller('TeacherCtrl', function($http) {
         vm.detailTab = 'marks';
         vm.detail = { marks:[], attendance:[], certificates:[], goals:[] };
         vm.loadingDetail = true;
-        $http.get(' + API_BASE + '/api/teacher/student/' + s.id, { headers }).then(function(res) {
+        $http.get(/api/teacher/student/' + s.id, { headers }).then(function(res) {
             vm.loadingDetail = false;
             if (res.data.success) {
                 vm.detail.marks = res.data.marks;
@@ -443,7 +443,7 @@ app.controller('TeacherCtrl', function($http) {
     vm.postAnnouncement = function() {
         if (!vm.newAnnounce.title || !vm.newAnnounce.message) { alert('Fill title and message'); return; }
         vm.isPosting = true;
-        $http.post(' + API_BASE + '/api/teacher/announce', vm.newAnnounce, { headers }).then(function(res) {
+        $http.post(/api/teacher/announce', vm.newAnnounce, { headers }).then(function(res) {
             vm.isPosting = false;
             if (res.data.success) {
                 vm.postSuccess = true;
@@ -477,7 +477,7 @@ app.controller('TeacherCtrl', function($http) {
                 status: s.status
             };
         });
-        $http.post(' + API_BASE + '/api/attendance/mark-bulk', { records:records }, { headers }).then(function(res) {
+        $http.post(/api/attendance/mark-bulk', { records:records }, { headers }).then(function(res) {
             vm.isMarking = false;
             if (res.data.success) {
                 vm.attSuccess=true; vm.attSavedCount=res.data.saved;
@@ -501,7 +501,7 @@ app.controller('TeacherCtrl', function($http) {
     vm.submitMarks = function() {
         if (!vm.marks.student_id || !vm.marks.subject_code || !vm.marks.obtained_marks) { alert('Fill all required fields'); return; }
         vm.isSubmittingMarks=true; vm.marksSuccess=false; vm.marksError=null;
-        $http.post(' + API_BASE + '/api/teacher/marks', vm.marks, { headers }).then(function(res) {
+        $http.post(/api/teacher/marks', vm.marks, { headers }).then(function(res) {
             vm.isSubmittingMarks=false;
             if (res.data.success) {
                 vm.marksSuccess=true;
@@ -515,7 +515,7 @@ app.controller('TeacherCtrl', function($http) {
     vm.doAwardPoints = function() {
         if (!vm.awardPoints || vm.awardPoints < 1) { vm.awardError='Enter valid points'; return; }
         vm.isAwarding=true; vm.awardSuccess=false; vm.awardError=null;
-        $http.post(' + API_BASE + '/api/teacher/award-points', { student_id:vm.selectedStudent.id, points:vm.awardPoints, reason:vm.awardReason }, { headers })
+        $http.post(/api/teacher/award-points', { student_id:vm.selectedStudent.id, points:vm.awardPoints, reason:vm.awardReason }, { headers })
             .then(function(res) {
                 vm.isAwarding=false;
                 if (res.data.success) {
