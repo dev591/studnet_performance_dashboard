@@ -159,7 +159,7 @@
 <script>
 const app = angular.module('EduDash', []);
 
-app.controller('DashboardCtrl', function($http, $scope) {
+app.controller('DashboardCtrl', function($http, $scope, $interval) {
     const vm = this;
     const token = localStorage.getItem('eduToken');
     const profileStr = localStorage.getItem('eduProfile');
@@ -178,33 +178,54 @@ app.controller('DashboardCtrl', function($http, $scope) {
     const headers = { 'Authorization': 'Bearer ' + token };
 
     // Load Dashboard Data
-    $http.get('/api/students/dashboard', { headers }).then(function(res) {
-        vm.loading = false;
-        const d = res.data;
-        vm.marks = d.marks || [];
-        vm.stats.attendance = (d.attendance && d.attendance.percentage) || 0;
-        const score = d.score ? d.score.total : 0;
-        vm.stats.score = score + (d.bonusPoints || 0);
-        // Calculate avg marks from marks array
-        if (vm.marks.length > 0) {
-            vm.stats.avgMarks = Math.round(vm.marks.reduce(function(s,m){return s+(m.obtained_marks||0);},0) / vm.marks.length);
-        }
-        vm.stats.certs = (d.certificates && d.certificates.length) || 0;
-    }).catch(function() { vm.loading = false; });
+    function loadDashboard() {
+        $http.get('/api/students/dashboard', { headers }).then(function(res) {
+            vm.loading = false;
+            const d = res.data;
+            vm.marks = d.marks || [];
+            vm.stats.attendance = (d.attendance && d.attendance.percentage) || 0;
+            const score = d.score ? d.score.total : 0;
+            vm.stats.score = score + (d.bonusPoints || 0);
+            // Calculate avg marks from marks array
+            if (vm.marks.length > 0) {
+                vm.stats.avgMarks = Math.round(vm.marks.reduce(function(s,m){return s+(m.obtained_marks||0);},0) / vm.marks.length);
+            }
+            vm.stats.certs = (d.certificates && d.certificates.length) || 0;
+        }).catch(function() { vm.loading = false; });
+    }
 
     // Load Announcements
-    $http.get('/api/announcements', { headers }).then(function(res) {
-        if (res.data.success) vm.announcements = res.data.announcements;
-    }).catch(angular.noop);
+    function loadAnnouncements() {
+        $http.get('/api/announcements', { headers }).then(function(res) {
+            if (res.data.success) vm.announcements = res.data.announcements;
+        }).catch(angular.noop);
+    }
 
     // Load rank from leaderboard
-    $http.get('/api/students/leaderboard', { headers }).then(function(res) {
-        if (res.data.success && res.data.leaderboard) {
-            var myId = vm.profile.id;
-            var idx = res.data.leaderboard.findIndex(function(s) { return s.id === myId; });
-            vm.stats.rank = idx >= 0 ? (idx + 1) : 'N/A';
-        }
-    }).catch(angular.noop);
+    function updateRank() {
+        $http.get('/api/students/leaderboard', { headers }).then(function(res) {
+            if (res.data.success && res.data.leaderboard) {
+                var myId = vm.profile.id;
+                var idx = res.data.leaderboard.findIndex(function(s) { return s.id === myId; });
+                vm.stats.rank = idx >= 0 ? (idx + 1) : 'N/A';
+            }
+        }).catch(angular.noop);
+    }
+
+    // Initial loads
+    loadDashboard();
+    loadAnnouncements();
+    updateRank();
+
+    // Poll every 10 seconds for live updates
+    const pollInterval = $interval(function() {
+        loadDashboard();
+        updateRank();
+    }, 10000);
+
+    $scope.$on('$destroy', function() {
+        if (pollInterval) $interval.cancel(pollInterval);
+    });
 
     const tips = [
         "Consistent attendance above 85% significantly boosts long-term performance.",
