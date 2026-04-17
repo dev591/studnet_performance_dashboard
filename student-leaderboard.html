@@ -125,7 +125,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
 <script>
 const app = angular.module('EduDash', []);
-app.controller('LeaderCtrl', function($http) {
+app.controller('LeaderCtrl', function($http, $interval, $scope) {
     const vm = this;
     const token = localStorage.getItem('eduToken');
     const profileStr = localStorage.getItem('eduProfile');
@@ -138,22 +138,36 @@ app.controller('LeaderCtrl', function($http) {
     vm.pointsToNext = 0;
     vm.loading = true;
 
-    $http.get('/api/students/leaderboard', { headers: { 'Authorization': 'Bearer ' + token } })
-        .then(function(res) {
-            vm.loading = false;
-            if (res.data.success) {
-                vm.board = res.data.leaderboard.map(function(s, i) {
-                    s.isMe = (s.id === vm.profile.id);
-                    if (s.isMe) {
-                        vm.myRank = i + 1;
-                        vm.myScore = s.score;
-                        if (i > 0) vm.pointsToNext = res.data.leaderboard[i-1].score - s.score;
-                    }
-                    return s;
-                });
-            }
-        })
-        .catch(function() { vm.loading = false; });
+    function fetchLeaderboard() {
+        $http.get('/api/students/leaderboard', { headers: { 'Authorization': 'Bearer ' + token } })
+            .then(function(res) {
+                vm.loading = false;
+                if (res.data.success) {
+                    vm.board = res.data.leaderboard.map(function(s, i) {
+                        s.isMe = (s.id === vm.profile.id);
+                        if (s.isMe) {
+                            vm.myRank = i + 1;
+                            vm.myScore = s.score;
+                            if (i > 0) vm.pointsToNext = res.data.leaderboard[i-1].score - s.score;
+                            else vm.pointsToNext = 0;
+                        }
+                        return s;
+                    });
+                }
+            })
+            .catch(function() { vm.loading = false; });
+    }
+
+    // Initial load
+    fetchLeaderboard();
+
+    // Poll every 10 seconds for "live" feel
+    const pollInterval = $interval(fetchLeaderboard, 10000);
+
+    // Clean up interval on scope destroy
+    $scope.$on('$destroy', function() {
+        if (pollInterval) $interval.cancel(pollInterval);
+    });
 
     vm.logout = function() {
         localStorage.removeItem('eduToken');

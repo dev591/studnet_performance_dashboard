@@ -74,7 +74,7 @@ router.get('/leaderboard', async (req, res) => {
     try {
         const { data: students, error } = await supabase
             .from('users')
-            .select('id, name, roll_no, branch')
+            .select('id, name, roll_no, branch, bonus_points')
             .eq('role', 'student');
 
         if (error || !students || students.length === 0) {
